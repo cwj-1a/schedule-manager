@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排班登记管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <h1>排班登记管理系统</h1>
+            <h2>管理员登录</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名：</label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码：</label>
+                    <input type="password" id="password" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="btn-login">登录</button>
+                <div id="loginError" class="login-error"></div>
+            </form>
+        </div>
+    </div>
+    <div id="appContainer" class="container" style="display: none;">
+        <header>
+            <h1>排班登记管理系统</h1>
+            <div class="header-actions">
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="current">新增排班</button>
+            <button class="tab-btn" data-tab="history">历史排班</button>
+        </div>
+
+        <div class="tab-content active" id="currentTab">
+            <div class="main-content">
+            <div class="form-section">
+                <h2>新增排班</h2>
+                <form id="scheduleForm">
+                    <div class="form-group">
+                        <label for="year">年份：</label>
+                        <input type="number" id="year" min="1900" max="2100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="month">月份：</label>
+                        <select id="month" required>
+                            <option value="">请选择月份</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="day">日期：</label>
+                        <input type="number" id="day" min="1" max="31" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weekday">星期：</label>
+                        <select id="weekday" required>
+                            <option value="">请选择星期</option>
+                            <option value="0">星期日</option>
+                            <option value="1">星期一</option>
+                            <option value="2">星期二</option>
+                            <option value="3">星期三</option>
+                            <option value="4">星期四</option>
+                            <option value="5">星期五</option>
+                            <option value="6">星期六</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person">人员：</label>
+                        <input type="text" id="person" placeholder="请输入人员姓名" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startTime">开始时间：</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endTime">结束时间：</label>
+                        <input type="time" id="endTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">备注：</label>
+                        <textarea id="notes" rows="3" placeholder="可选备注信息"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">添加排班</button>
+                </form>
+            </div>
+
+            <div class="list-section">
+                <div class="filter-section">
+                    <h2>排班列表</h2>
+                    <div class="filter-controls">
+                        <input type="number" id="filterYear" placeholder="年份" min="1900" max="2100">
+                        <select id="filterMonth">
+                            <option value="">全部月份</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
+                        </select>
+                        <input type="number" id="filterDay" placeholder="日期" min="1" max="31">
+                        <input type="text" id="filterPerson" placeholder="搜索人员">
+                        <button class="btn-filter" onclick="filterSchedules()">筛选</button>
+                        <button class="btn-reset" onclick="resetFilter()">重置</button>
+                    </div>
+                    <div class="export-controls">
+                        <button class="btn-export-csv" onclick="exportToCSV()">导出CSV</button>
+                        <button class="btn-export-excel" onclick="exportToExcel()">导出Excel</button>
+                        <button class="btn-export-html" onclick="exportToHTML()">导出HTML</button>
+                    </div>
+                </div>
+
+                <div id="scheduleList" class="schedule-list">
+                    <p class="no-data">暂无排班记录</p>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="tab-content" id="historyTab">
+            <div class="history-section">
+                <h2>历史排班记录</h2>
+                <div class="history-filter-controls">
+                    <input type="number" id="historyFilterYear" placeholder="年份" min="1900" max="2100">
+                    <select id="historyFilterMonth">
+                        <option value="">全部月份</option>
+                        <option value="1">1月</option>
+                        <option value="2">2月</option>
+                        <option value="3">3月</option>
+                        <option value="4">4月</option>
+                        <option value="5">5月</option>
+                        <option value="6">6月</option>
+                        <option value="7">7月</option>
+                        <option value="8">8月</option>
+                        <option value="9">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+                    <input type="number" id="historyFilterDay" placeholder="日期" min="1" max="31">
+                    <input type="text" id="historyFilterPerson" placeholder="搜索人员">
+                    <button class="btn-filter" onclick="filterHistorySchedules()">筛选</button>
+                    <button class="btn-reset" onclick="resetHistoryFilter()">重置</button>
+                </div>
+                <div class="history-export-controls">
+                    <button class="btn-export-csv" onclick="exportHistoryToCSV()">导出CSV</button>
+                    <button class="btn-export-excel" onclick="exportHistoryToExcel()">导出Excel</button>
+                    <button class="btn-export-html" onclick="exportHistoryToHTML()">导出HTML</button>
+                </div>
+
+                <div class="history-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSchedules">0</div>
+                        <div class="stat-label">总排班数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalPersons">0</div>
+                        <div class="stat-label">参与人数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalHours">0</div>
+                        <div class="stat-label">总工时（小时）</div>
+                    </div>
+                </div>
+
+                <div id="historyScheduleList" class="history-schedule-list">
+                    <p class="no-data">暂无历史排班记录</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
