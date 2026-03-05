@@ -403,6 +403,99 @@ function resetForm() {
     document.getElementById('endTime').value = endTimeValue;
 }
 
+function copySchedules() {
+    const copyStartDate = document.getElementById('copyStartDate').value;
+    const copyWeeks = parseInt(document.getElementById('copyWeeks').value);
+    
+    if (!copyStartDate) {
+        showNotification('请选择复制起始日期！', 'error');
+        return;
+    }
+    
+    if (!copyWeeks || copyWeeks < 1) {
+        showNotification('请选择有效的复制周数！', 'error');
+        return;
+    }
+    
+    const startDate = new Date(copyStartDate);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
+    
+    const selectedWeekSchedules = schedules.filter(schedule => {
+        const scheduleDate = new Date(schedule.year, schedule.month - 1, schedule.day);
+        return scheduleDate >= startDate && scheduleDate <= endDate;
+    });
+    
+    if (selectedWeekSchedules.length === 0) {
+        showNotification('所选周内没有排班记录！', 'error');
+        return;
+    }
+    
+    let totalCopiedCount = 0;
+    let totalSkippedCount = 0;
+    
+    for (let weekOffset = 1; weekOffset <= copyWeeks; weekOffset++) {
+        let weekCopiedCount = 0;
+        let weekSkippedCount = 0;
+        
+        selectedWeekSchedules.forEach(schedule => {
+            const originalDate = new Date(schedule.year, schedule.month - 1, schedule.day);
+            const daysToAdd = weekOffset * 7;
+            const newDate = new Date(originalDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+            
+            const newYear = newDate.getFullYear();
+            const newMonth = newDate.getMonth() + 1;
+            const newDay = newDate.getDate();
+            const newWeekday = newDate.getDay();
+            
+            const existingSchedules = schedules.filter(s => 
+                s.year === newYear && 
+                s.month === newMonth && 
+                s.day === newDay &&
+                s.person === schedule.person &&
+                s.startTime === schedule.startTime &&
+                s.endTime === schedule.endTime
+            );
+            
+            if (existingSchedules.length > 0) {
+                weekSkippedCount++;
+                return;
+            }
+            
+            const newSchedule = {
+                id: Date.now() + Math.random(),
+                year: newYear,
+                month: newMonth,
+                day: newDay,
+                weekday: newWeekday,
+                person: schedule.person,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime,
+                notes: schedule.notes
+            };
+            
+            schedules.push(newSchedule);
+            weekCopiedCount++;
+        });
+        
+        totalCopiedCount += weekCopiedCount;
+        totalSkippedCount += weekSkippedCount;
+    }
+    
+    saveSchedules();
+    renderSchedules();
+    
+    if (totalCopiedCount > 0) {
+        let message = `成功复制 ${totalCopiedCount} 条排班到 ${copyWeeks} 周！`;
+        if (totalSkippedCount > 0) {
+            message += `（${totalSkippedCount} 条因重复已跳过）`;
+        }
+        showNotification(message);
+    } else {
+        showNotification('所选周的排班已全部存在，无需复制！', 'error');
+    }
+}
+
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;

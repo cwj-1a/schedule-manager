@@ -275,9 +275,78 @@ header h1 {
     border-top: 1px solid #e0e0e0;
 }
 
+.copy-week-controls {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f0f8ff;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+}
+
+.copy-week-controls h3 {
+    color: #17a2b8;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.copy-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.copy-controls .form-group {
+    margin-bottom: 0;
+}
+
+.copy-controls .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.copy-controls .form-group input[type="date"] {
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.copy-controls .form-group input[type="number"] {
+    width: 80px;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.copy-controls .form-group input:focus {
+    outline: none;
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+}
+
+@media (max-width: 768px) {
+    .copy-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .copy-controls .form-group input[type="number"] {
+        width: 100%;
+    }
+}
+
 .btn-export-csv,
 .btn-export-excel,
-.btn-export-html {
+.btn-export-html,
+.btn-copy-week {
     padding: 10px 20px;
     border: none;
     border-radius: 6px;
@@ -286,6 +355,14 @@ header h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     color: white;
+}
+
+.btn-copy-week {
+    background: #17a2b8;
+}
+
+.btn-copy-week:hover {
+    background: #138496;
 }
 
 .btn-export-csv {
